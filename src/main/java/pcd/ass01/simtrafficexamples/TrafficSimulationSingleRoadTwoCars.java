@@ -1,7 +1,7 @@
 package pcd.ass01.simtrafficexamples;
 
 import pcd.ass01.simengineseq.AbstractSimulation;
-import pcd.ass01.simtrafficbase.*;
+import pcd.ass01.simtraffic.base.*;
 
 /**
  * 

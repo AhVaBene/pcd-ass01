@@ -1,7 +1,7 @@
 package pcd.ass01.simtrafficexamples;
 
 import pcd.ass01.simengineseq.AbstractSimulation;
-import pcd.ass01.simtrafficbase.*;
+import pcd.ass01.simtraffic.base.*;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class TrafficSimulationSingleRoadSeveralCars extends AbstractSimulation {
 			double carDeceleration = 0.3; //  + gen.nextDouble()/2;
 			double carMaxSpeed = 7; // 4 + gen.nextDouble();
 						
-			CarAgent car = new CarAgentBasic(carId, env, 
+			CarAgent car = new CarAgentBasic(carId, env,
 									road,
 									initialPos, 
 									carAcceleration, 

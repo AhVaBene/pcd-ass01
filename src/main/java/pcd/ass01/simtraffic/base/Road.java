@@ -1,4 +1,4 @@
-package pcd.ass01.simtrafficbase;
+package pcd.ass01.simtraffic.base;
 
 import java.util.ArrayList;
 import java.util.List;
