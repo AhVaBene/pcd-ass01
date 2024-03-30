@@ -3,31 +3,41 @@ package pcd.ass01.simtraffic.concurrent.engine;
 import pcd.ass01.simtraffic.concurrent.base.AbstractEnvironment;
 import pcd.ass01.simtraffic.concurrent.utils.*;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class RoadsEnv extends AbstractEnvironment {
+    private static final int MIN_DIST_ALLOWED = 5;
+    private static final int CAR_DETECTION_RANGE = 30;
+    //private static final int SEM_DETECTION_RANGE = 30;
+
     /* list of roads */
-    private List<Road> roads;
+    private final List<Road> roads;
 
     /* traffic lights */
-    private List<TrafficLight> trafficLights;
+    private final List<TrafficLight> trafficLights;
 
     /* cars situated in the environment */
-    private HashMap<String, CarAgentInfo> registeredCars;
+    private final HashMap<String, CarAgentInfo> registeredCars;
 
     public RoadsEnv() {
         super("environment");
+        this.registeredCars = new HashMap<>();
+        this.trafficLights = new ArrayList<>();
+        this.roads = new ArrayList<>();
     }
 
     @Override
     public void init() {
-        //setup e run thread semafori
+        for(var tl: trafficLights) {
+            tl.init();
+        }
     }
 
     @Override
-    public void run() {
-        //comportamento latch
+    public void step(long timePassed) {
+        for(var tl: trafficLights) {
+            tl.step(timePassed);
+        }
     }
 
     public Road createRoad(P2d p0, P2d p1) {
@@ -44,14 +54,66 @@ public class RoadsEnv extends AbstractEnvironment {
 
     @Override
     public Percept getCurrentPercepts(String agentId) {
-        return null;
-    }
+        CarAgentInfo carInfo = registeredCars.get(agentId);
+        double pos = carInfo.getPos();
+        Road road = carInfo.getRoad();
+        Optional<CarAgentInfo> nearestCar = getNearestCarInFront(road,pos);
+        Optional<TrafficLightInfo> nearestSem = getNearestSemaphoreInFront(road,pos);
 
+        return new CarPercept(pos, nearestCar, nearestSem);
+    }
+    private Optional<CarAgentInfo> getNearestCarInFront(Road road, double carPos){
+        return
+                registeredCars
+                        .values()
+                        .stream()
+                        .filter((carInfo) -> carInfo.getRoad() == road)
+                        .filter((carInfo) -> {
+                            double dist = carInfo.getPos() - carPos;
+                            return dist > 0 && dist <= CAR_DETECTION_RANGE;
+                        })
+                        .min((c1, c2) -> (int) Math.round(c1.getPos() - c2.getPos()));
+    }
+    private Optional<TrafficLightInfo> getNearestSemaphoreInFront(Road road, double carPos){
+        return
+                road.getTrafficLights()
+                        .stream()
+                        .filter((TrafficLightInfo tl) -> tl.roadPos() > carPos)
+                        .min((c1, c2) -> (int) Math.round(c1.roadPos() - c2.roadPos()));
+    }
     @Override
     public void doAction(String agentId, Action act) {
+        if (Objects.requireNonNull(act) instanceof MoveForward mv) {
+            CarAgentInfo info = registeredCars.get(agentId);
+            Road road = info.getRoad();
+            Optional<CarAgentInfo> nearestCar = getNearestCarInFront(road, info.getPos());
 
+            if (nearestCar.isPresent()) {
+                double dist = nearestCar.get().getPos() - info.getPos();
+                if (dist > mv.distance() + MIN_DIST_ALLOWED) {
+                    info.updatePos(info.getPos() + mv.distance());
+                }
+            } else {
+                info.updatePos(info.getPos() + mv.distance());
+            }
+
+            if (info.getPos() > road.getLen()) {
+                info.updatePos(0);
+            }
+        }
+    }
+    public void registerNewCar(CarAgent carAgent, Road road, double initialPos) {
+        registeredCars.put(carAgent.getName(), new CarAgentInfo(carAgent, road, initialPos));
+    }
+    public List<CarAgentInfo> getAgentInfo() {
+        return this.registeredCars.values().stream().toList();
     }
 
-    public void registerNewCar(CarAgent carAgent, Road road, double initialPos) {
+    public List<Road> getRoads(){
+        return roads;
+    }
+
+    public List<TrafficLight> getTrafficLights(){
+        return trafficLights;
     }
 }

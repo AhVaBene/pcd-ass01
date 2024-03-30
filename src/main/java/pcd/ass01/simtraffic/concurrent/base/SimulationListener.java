@@ -1,4 +1,4 @@
-package pcd.ass01.simtraffic.concurrent.utils;
+package pcd.ass01.simtraffic.concurrent.base;
 
 import pcd.ass01.simtraffic.concurrent.base.AbstractAgent;
 import pcd.ass01.simtraffic.concurrent.base.AbstractEnvironment;

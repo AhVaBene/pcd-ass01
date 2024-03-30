@@ -1,8 +1,9 @@
-package pcd.ass01.app;
+package pcd.ass01.simtraffic.seq.examples;
 
-import pcd.ass01.simtraffic.concurrent.base.*;
-import pcd.ass01.simtraffic.concurrent.engine.*;
-import pcd.ass01.simtraffic.concurrent.utils.*;
+import pcd.ass01.simtraffic.seq.base.AbstractAgent;
+import pcd.ass01.simtraffic.seq.base.AbstractEnvironment;
+import pcd.ass01.simtraffic.seq.base.SimulationListener;
+import pcd.ass01.simtraffic.seq.engine.*;
 
 import javax.swing.*;
 import java.awt.*;

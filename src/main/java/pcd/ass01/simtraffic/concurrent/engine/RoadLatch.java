@@ -1,26 +1,32 @@
 package pcd.ass01.simtraffic.concurrent.engine;
 
+import pcd.ass01.simtraffic.concurrent.base.AbstractSimulation;
+import pcd.ass01.simtraffic.concurrent.examples.TrafficSimulationSingleRoadWithTrafficLightTwoCars;
+import pcd.ass01.simtraffic.concurrent.utils.Barrier;
 import pcd.ass01.simtraffic.concurrent.utils.Latch;
 
 public class RoadLatch implements Latch {
-    private int states;
-    public RoadLatch() {
-        this.states = 3;
+    private int counter;
+    private final int states;
+    public RoadLatch(int states) {
+        this.states = states;
+        this.counter = states;
     }
 
-    @Override
     public synchronized void countDown() {
-        if(--this.states == 0) {
+        this.counter--;
+        if(this.counter == 0) {
             notifyAll();
         }
     }
 
-    @Override
     public synchronized void await() throws InterruptedException {
-        while(this.states > 0) {
+        while(this.counter > 0) {
             wait();
         }
-        this.states = 3;
-        //TODO step increment
+    }
+
+    public synchronized void reset() {
+        this.counter = states;
     }
 }

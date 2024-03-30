@@ -1,24 +1,58 @@
 package pcd.ass01.simtraffic.concurrent.engine;
 
+import pcd.ass01.simtraffic.concurrent.utils.Barrier;
+import pcd.ass01.simtraffic.concurrent.utils.Latch;
 import pcd.ass01.simtraffic.concurrent.utils.P2d;
 
-public class TrafficLight extends Thread {
+public class TrafficLight {
     public static enum TrafficLightState {GREEN, YELLOW, RED}
     private TrafficLightState state, initialState;
-    private int currentTimeInState;
+    private long currentTimeInState;
+    private long startingTime;
     private int redDuration, greenDuration, yellowDuration;
     private P2d pos;
 
     public TrafficLight(P2d pos, TrafficLightState initialState, int greenDuration, int yellowDuration, int redDuration) {
-        this.redDuration = redDuration;
-        this.greenDuration = greenDuration;
-        this.yellowDuration = yellowDuration;
+        this.redDuration = redDuration * 100;
+        this.greenDuration = greenDuration * 100;
+        this.yellowDuration = yellowDuration * 100;
         this.pos = pos;
         this.initialState = initialState;
     }
+    public void init() {
+        state = initialState;
+        currentTimeInState = 0;
+        startingTime = System.currentTimeMillis();
+    }
 
-    public void run() {
-        //TODO
+    public synchronized void step(long timePassed) {
+        long time = timePassed - startingTime;
+        currentTimeInState += time;
+        switch (state) {
+            case TrafficLightState.GREEN:
+                if (currentTimeInState >= greenDuration) {
+                    state = TrafficLightState.YELLOW;
+                    currentTimeInState = 0;
+                    startingTime = System.currentTimeMillis();
+                }
+                break;
+            case TrafficLightState.RED:
+                if (currentTimeInState >= redDuration) {
+                    state = TrafficLightState.GREEN;
+                    currentTimeInState = 0;
+                    startingTime = System.currentTimeMillis();
+                }
+                break;
+            case TrafficLightState.YELLOW:
+                if (currentTimeInState >= yellowDuration) {
+                    state = TrafficLightState.RED;
+                    currentTimeInState = 0;
+                    startingTime = System.currentTimeMillis();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     public boolean isGreen() {

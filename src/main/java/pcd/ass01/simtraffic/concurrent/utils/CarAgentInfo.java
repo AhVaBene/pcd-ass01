@@ -1,8 +1,6 @@
 package pcd.ass01.simtraffic.concurrent.utils;
 
-//TODO
-import pcd.ass01.simtraffic.seq.engine.CarAgent;
-import pcd.ass01.simtraffic.seq.engine.Road;
+import pcd.ass01.simtraffic.concurrent.engine.CarAgent;
 
 public  class CarAgentInfo {
 

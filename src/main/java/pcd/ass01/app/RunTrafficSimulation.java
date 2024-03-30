@@ -1,6 +1,7 @@
 package pcd.ass01.app;
 
-import pcd.ass01.simtraffic.seq.examples.TrafficSimulationWithCrossRoads;
+import pcd.ass01.simtraffic.concurrent.examples.TrafficSimulationSingleRoadWithTrafficLightTwoCars;
+import pcd.ass01.simtraffic.concurrent.examples.TrafficSimulationWithCrossRoads;
 
 /**
  * 
@@ -11,6 +12,7 @@ public class RunTrafficSimulation {
 
 	public static void main(String[] args) {		
 
+		//var simulation = new TrafficSimulationSingleRoadWithTrafficLightTwoCars();
 		var simulation = new TrafficSimulationWithCrossRoads();
 		simulation.setup();
 		
@@ -20,6 +22,6 @@ public class RunTrafficSimulation {
 		
 		simulation.addSimulationListener(stat);
 		simulation.addSimulationListener(view);		
-		simulation.run(10000);
+		simulation.start();
 	}
 }

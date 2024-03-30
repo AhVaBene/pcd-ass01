@@ -8,10 +8,14 @@ import pcd.ass01.simtraffic.concurrent.utils.Percept;
  * Base class to define the environment of the simulation
  *
  */
-public abstract class AbstractEnvironment extends Thread {
-
+public abstract class AbstractEnvironment {
+    private String id;
     protected AbstractEnvironment(String id) {
-        super(id);
+        this.id = id;
+    }
+
+    public String getName() {
+        return id;
     }
 
     /**
@@ -19,6 +23,14 @@ public abstract class AbstractEnvironment extends Thread {
      * Called at the beginning of the simulation
      */
     public abstract void init();
+
+    /**
+     *
+     * Called at each step of the simulation
+     *
+     * @param timePassed
+     */
+    public abstract void step(long timePassed);
 
     /**
      *

@@ -3,6 +3,7 @@ package pcd.ass01.simtraffic.concurrent.engine;
 import pcd.ass01.simtraffic.concurrent.utils.*;
 
 import java.util.Optional;
+import java.util.concurrent.CyclicBarrier;
 
 public class CarAgentImpl extends CarAgent {
     private static final int CAR_NEAR_DIST = 15;
@@ -18,21 +19,25 @@ public class CarAgentImpl extends CarAgent {
 
     private CarAgentState state;
 
-    private int waitingTime;
+    private long waitingTime;
+    private long startingTime;
 
     public CarAgentImpl(String id, RoadsEnv env, Road road,
-                            double initialPos,
-                            double acc,
-                            double dec,
-                            double vmax) {
-        super(id, env, road, initialPos, acc, dec, vmax);
+                        double initialPos,
+                        double acc,
+                        double dec,
+                        double vmax,
+                        Barrier barrier, Counter counter,
+                        CyclicBarrier simulationBarrier) {
+        super(id, env, road, initialPos, acc, dec, vmax,
+                barrier, counter, simulationBarrier);
         state = CarAgentState.STOPPED;
+        this.startingTime = System.currentTimeMillis();
     }
 
     @Override
-    public void decide() {
-        //TODO change in real time
-        int dt = 1;
+    public synchronized void decide() {
+        double timePassed = (System.currentTimeMillis() - startingTime) / 100.0;
         switch (state) {
             case CarAgentState.STOPPED:
                 if (!detectedNearCar()) {
@@ -45,7 +50,7 @@ public class CarAgentImpl extends CarAgent {
                 } else if (detectedRedOrOrgangeSemNear()) {
                     state = CarAgentState.DECELERATING_BECAUSE_OF_A_NOT_GREEN_SEM;
                 } else {
-                    this.currentSpeed += acceleration * dt;
+                    this.currentSpeed += acceleration * timePassed;
                     if (currentSpeed >= maxSpeed) {
                         state = CarAgentState.MOVING_CONSTANT_SPEED;
                     }
@@ -59,16 +64,16 @@ public class CarAgentImpl extends CarAgent {
                 }
                 break;
             case CarAgentState.DECELERATING_BECAUSE_OF_A_CAR:
-                this.currentSpeed -= deceleration * dt;
+                this.currentSpeed -= deceleration * timePassed;
                 if (this.currentSpeed <= 0) {
                     state =  CarAgentState.STOPPED;
                 } else if (this.carFarEnough()) {
                     state = CarAgentState.WAIT_A_BIT;
-                    waitingTime = 0;
+                    waitingTime = System.currentTimeMillis();
                 }
                 break;
             case CarAgentState.DECELERATING_BECAUSE_OF_A_NOT_GREEN_SEM:
-                this.currentSpeed -= deceleration * dt;
+                this.currentSpeed -= deceleration * timePassed;
                 if (this.currentSpeed <= 0) {
                     state =  CarAgentState.WAITING_FOR_GREEN_SEM;
                 } else if (!detectedRedOrOrgangeSemNear()) {
@@ -76,8 +81,8 @@ public class CarAgentImpl extends CarAgent {
                 }
                 break;
             case CarAgentState.WAIT_A_BIT:
-                waitingTime += dt;
-                if (waitingTime > MAX_WAITING_TIME) {
+                long waitingTimePassed = (int)(System.currentTimeMillis() - waitingTime) / 1000;
+                if (waitingTimePassed > MAX_WAITING_TIME) {
                     state = CarAgentState.ACCELERATING;
                 }
                 break;
@@ -89,8 +94,11 @@ public class CarAgentImpl extends CarAgent {
         }
 
         if (currentSpeed > 0) {
-            selectedAction = Optional.of(new MoveForward(currentSpeed * dt));
+            selectedAction = Optional.of(new MoveForward(currentSpeed * timePassed));
+        } else {
+            currentSpeed = 0;
         }
+        startingTime = System.currentTimeMillis();
     }
 
     private boolean detectedNearCar() {

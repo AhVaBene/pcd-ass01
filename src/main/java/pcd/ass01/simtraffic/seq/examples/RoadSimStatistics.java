@@ -1,7 +1,9 @@
-package pcd.ass01.app;
+package pcd.ass01.simtraffic.seq.examples;
 
-import pcd.ass01.simtraffic.concurrent.base.*;
-import pcd.ass01.simtraffic.concurrent.engine.*;
+import pcd.ass01.simtraffic.seq.base.AbstractAgent;
+import pcd.ass01.simtraffic.seq.base.AbstractEnvironment;
+import pcd.ass01.simtraffic.seq.base.SimulationListener;
+import pcd.ass01.simtraffic.seq.engine.CarAgent;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class RoadSimStatistics implements SimulationListener {
 	@Override
 	public void notifyStepDone(int t, List<AbstractAgent> agents, AbstractEnvironment env) {
 		double avSpeed = 0;
-		log("STEP " + t);
+		
 		maxSpeed = -1;
 		minSpeed = Double.MAX_VALUE;
 		for (var agent: agents) {
@@ -43,10 +45,9 @@ public class RoadSimStatistics implements SimulationListener {
 			} else if (currSpeed < minSpeed) {
 				minSpeed = currSpeed;
 			}
-			log("agent "+ agent.getName() + " speed: " + currSpeed);
 		}
 		
-		if (!agents.isEmpty()) {
+		if (agents.size() > 0) {
 			avSpeed /= agents.size();
 		}
 		log("average speed: " + avSpeed);
