@@ -1,19 +1,22 @@
-package pcd.ass01.simtraffic.seq.examples;
+package pcd.ass01.app;
+
+import pcd.ass01.simtraffic.concurrent.examples.TrafficSimulationSingleRoadMassiveNumberOfCars;
 
 public class RunTrafficSimulationMassiveTest {
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) throws InterruptedException {
 
 		int numCars = 5000;
-		int nSteps = 1000;
+		int nSteps = 100;
 		
-		var simulation = new TrafficSimulationSingleRoadMassiveNumberOfCars(numCars);
+		var simulation = new TrafficSimulationSingleRoadMassiveNumberOfCars(numCars, nSteps);
 		simulation.setup();
 		
 		log("Running the simulation: " + numCars + " cars, for " + nSteps + " steps ...");
 		
-		simulation.run(nSteps);
+		simulation.start();
 
+		simulation.join();
 		long d = simulation.getSimulationDuration();
 		log("Completed in " + d + " ms - average time per step: " + simulation.getAverageTimePerCycle() + " ms");
 	}

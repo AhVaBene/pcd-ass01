@@ -60,15 +60,16 @@ public abstract class AbstractSimulation extends Thread {
         for (var a: agents) {
             a.start();
         }
-        int t=0;
+
+        currentWallTime = System.currentTimeMillis();
         while (counter.isNotMax()) {
             try {
-                currentWallTime = System.currentTimeMillis();
                 this.roadsLatch.await();
                 this.roadsLatch.reset();
                 this.produce();
                 notifyNewStep(agents, env);
                 timePerStep += System.currentTimeMillis() - currentWallTime;
+                currentWallTime = System.currentTimeMillis();
                 if (toBeInSyncWithWallTime) {
                     syncWithWallTime();
                 }
@@ -77,11 +78,9 @@ public abstract class AbstractSimulation extends Thread {
                 throw new RuntimeException(e);
             }
         }
-        this.endWallTime = System.currentTimeMillis();
-        long simTime = endWallTime - startWallTime;
-        //TODO change the method to calculate averageTimePerStep
-        //this.averageTimePerStep = (double) timePerStep / counter.getAcc();
-        this.averageTimePerStep = (double) simTime / counter.getAcc();
+        this.endWallTime = System.currentTimeMillis() - startWallTime;
+        long simTime = endWallTime ;
+        this.averageTimePerStep = (double) timePerStep / counter.getAcc();
         System.out.println("Simulation Ended in " + simTime + "ms with an average time per step of " + averageTimePerStep + "ms");
     }
 
