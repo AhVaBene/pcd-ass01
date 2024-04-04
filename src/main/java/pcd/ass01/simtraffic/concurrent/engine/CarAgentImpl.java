@@ -11,6 +11,8 @@ public class CarAgentImpl extends CarAgent {
     private static final int MAX_WAITING_TIME = 2;
     private static final int SEM_NEAR_DIST = 100;
 
+    //private static final double
+
     private enum CarAgentState { STOPPED, ACCELERATING,
         DECELERATING_BECAUSE_OF_A_CAR,
         DECELERATING_BECAUSE_OF_A_NOT_GREEN_SEM,
@@ -20,7 +22,6 @@ public class CarAgentImpl extends CarAgent {
     private CarAgentState state;
 
     private long waitingTime;
-    private long startingTime;
 
     public CarAgentImpl(String id, RoadsEnv env, Road road,
                         double initialPos,
@@ -38,6 +39,10 @@ public class CarAgentImpl extends CarAgent {
     @Override
     public synchronized void decide() {
         double timePassed = (System.currentTimeMillis() - startingTime) / 100.0;
+        if(timePassed >= 1.0){
+            timePassed = 0.45;
+        }
+        System.out.println(System.currentTimeMillis()+"  "+startingTime);
         switch (state) {
             case CarAgentState.STOPPED:
                 if (!detectedNearCar()) {

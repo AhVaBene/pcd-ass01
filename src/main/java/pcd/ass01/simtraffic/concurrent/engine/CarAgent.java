@@ -20,6 +20,8 @@ public abstract class CarAgent extends AbstractAgent {
     protected double acceleration;
     protected double deceleration;
 
+    protected long startingTime;
+
     /* percept and action retrieved and submitted at each step */
     protected CarPercept currentPercept;
     protected Optional<Action> selectedAction;
@@ -59,6 +61,7 @@ public abstract class CarAgent extends AbstractAgent {
                 selectedAction.ifPresent(action -> roadEnv.doAction(getName(), action));
                 carsBarrier.hitAndWaitAll(3);
                 simulationBarrier.await();
+                //this.startingTime = System.currentTimeMillis();
             } catch (InterruptedException | BrokenBarrierException e) {
                 throw new RuntimeException(e);
             }

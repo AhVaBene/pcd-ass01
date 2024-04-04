@@ -42,6 +42,12 @@ public abstract class AbstractSimulation extends Thread {
         this.roadsLatch = roadsLatch;
     }
 
+    public CyclicBarrier getSimulationBarrier(){
+        return this.barrier;
+    }
+
+    public Counter getCounter(){return this.counter;}
+
     /**
      * Method running the simulation for a number of steps
      *
@@ -69,11 +75,11 @@ public abstract class AbstractSimulation extends Thread {
                 this.produce();
                 notifyNewStep(agents, env);
                 timePerStep += System.currentTimeMillis() - currentWallTime;
+                this.barrier.await();
                 currentWallTime = System.currentTimeMillis();
                 if (toBeInSyncWithWallTime) {
                     syncWithWallTime();
                 }
-                this.barrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
                 throw new RuntimeException(e);
             }

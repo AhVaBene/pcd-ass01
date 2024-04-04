@@ -22,7 +22,7 @@ public class TrafficSimulationWithCrossRoads extends AbstractSimulation {
 		int nCars = 4;
 
 		Latch roadsLatch = new RoadLatch(3);
-		CyclicBarrier simulationBarrier = new CyclicBarrier(nCars+1);
+		CyclicBarrier simulationBarrier = new CyclicBarrier(nCars+2);
 		Barrier barrier = new CarsBarrier(nCars, roadsLatch);
 		Counter counter = new Counter(nSteps);
 		this.setup(simulationBarrier, roadsLatch, counter);

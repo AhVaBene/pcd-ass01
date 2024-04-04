@@ -6,24 +6,41 @@ import pcd.ass01.simtraffic.concurrent.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.concurrent.CyclicBarrier;
 
 public class RoadSimView extends JFrame implements SimulationListener {
 
 	private RoadSimViewPanel panel;
 	private static final int CAR_DRAW_SIZE = 10;
 	
-	public RoadSimView() {
+	public RoadSimView(CyclicBarrier barrier, Counter counter) {
 		super("RoadSim View");
 		setSize(1500,600);
 			
 		panel = new RoadSimViewPanel(1500,600); 
 		panel.setSize(1500, 600);
 
+		JTextField text = new JTextField(10);
+
+		JButton button1 = new JButton("START");
+		StartAndStopListener listener = new StartAndStopListener(barrier, counter, text);
+		button1.addActionListener(listener);
+
+		JButton button2 = new JButton("STOP");
+		button2.addActionListener(listener);
+
+
 		JPanel cp = new JPanel();
+		JPanel cp2 = new JPanel();
 		LayoutManager layout = new BorderLayout();
 		cp.setLayout(layout);
 		cp.add(BorderLayout.CENTER,panel);
+		cp2.add(BorderLayout.WEST,button1);
+		cp2.add(BorderLayout.WEST,button2);
+		cp2.add(BorderLayout.EAST, text);
+		cp.add(BorderLayout.SOUTH, cp2);
 		setContentPane(cp);		
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
