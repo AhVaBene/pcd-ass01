@@ -2,10 +2,10 @@ package pcd.ass01.simtraffic.seq.examples;
 
 public class RunTrafficSimulationMassiveTest {
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {
 
-		int numCars = 5000;
-		int nSteps = 1000;
+		int numCars = 1000;
+		int nSteps = 2000;
 		
 		var simulation = new TrafficSimulationSingleRoadMassiveNumberOfCars(numCars);
 		simulation.setup();

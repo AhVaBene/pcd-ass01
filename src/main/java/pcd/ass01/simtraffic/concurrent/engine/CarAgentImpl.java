@@ -42,7 +42,7 @@ public class CarAgentImpl extends CarAgent {
         if(timePassed >= 1.0){
             timePassed = 0.45;
         }
-        System.out.println(System.currentTimeMillis()+"  "+startingTime);
+        //System.out.println(System.currentTimeMillis()+"  "+startingTime);
         switch (state) {
             case CarAgentState.STOPPED:
                 if (!detectedNearCar()) {

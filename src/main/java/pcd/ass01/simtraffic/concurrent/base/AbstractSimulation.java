@@ -84,8 +84,8 @@ public abstract class AbstractSimulation extends Thread {
                 throw new RuntimeException(e);
             }
         }
-        this.endWallTime = System.currentTimeMillis() - startWallTime;
-        long simTime = endWallTime ;
+        this.endWallTime = System.currentTimeMillis();
+        long simTime = endWallTime - startWallTime;
         this.averageTimePerStep = (double) timePerStep / counter.getAcc();
         System.out.println("Simulation Ended in " + simTime + "ms with an average time per step of " + averageTimePerStep + "ms");
     }
@@ -139,5 +139,9 @@ public abstract class AbstractSimulation extends Thread {
                 Thread.sleep(delay - wallTimeDT);
             }
         } catch (Exception ex) {}
+    }
+
+    public int getStepsNumber() {
+        return this.counter.getMax();
     }
 }

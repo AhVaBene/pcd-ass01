@@ -32,7 +32,7 @@ public abstract class AbstractSimulation {
 	private long currentWallTime;
 	private long startWallTime;
 	private long endWallTime;
-	private long averageTimePerStep;
+	private double averageTimePerStep;
 
 
 	protected AbstractSimulation() {
@@ -94,7 +94,7 @@ public abstract class AbstractSimulation {
 		}	
 		
 		endWallTime = System.currentTimeMillis();
-		this.averageTimePerStep = timePerStep / numSteps;
+		this.averageTimePerStep = (double) timePerStep / numSteps;
 		
 	}
 	
@@ -102,7 +102,7 @@ public abstract class AbstractSimulation {
 		return endWallTime - startWallTime;
 	}
 	
-	public long getAverageTimePerCycle() {
+	public double getAverageTimePerCycle() {
 		return averageTimePerStep;
 	}
 	

@@ -15,6 +15,7 @@ public class Counter {
     public synchronized int getAcc() {
         return acc;
     }
+    public synchronized int getMax() { return this.max; }
     public synchronized boolean isNotMax() {
         return acc < max;
     }
